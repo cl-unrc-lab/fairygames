@@ -67,11 +67,11 @@ public class FairSTPGExplicit extends STPGExplicit {
 	}
 
 	/**
-	 * Copy constructor
+	 * Copy constructor that takes a STPGExplicit
 	 */
-	public FairSTPGExplicit(FairSTPGExplicit stpg){
+	public FairSTPGExplicit(STPGExplicit stpg){
 		super(stpg);
-		this.oldTrans = stpg.oldTrans;
+		this.oldTrans = null;
 	}
 
 	
@@ -105,7 +105,7 @@ public class FairSTPGExplicit extends STPGExplicit {
 	}
 	
 	
-	public double[] computeUpperBoundVariant2(int player, SMGRewardsSimple rew, FairSTPGModelChecker mc) throws PrismException{
+	public double[] computeUpperBoundVariant2(int player, STPGRewardsSimple rew, FairSTPGModelChecker mc) throws PrismException{
 		double[] res = new double[this.getNumStates()];
 		
 		// the given player is the minimizer
@@ -298,5 +298,108 @@ public class FairSTPGExplicit extends STPGExplicit {
 		return this.stateOwners.get(i);
 	}
 	
+	/**
+	 * 
+	 * @param target	the target (terminal states)
+	 * @return	@code{True} iff the game is stopping under fairness
+	 */
+	public FairyResult stoppingUnderFairness(BitSet target){
+		
+		double timer = System.currentTimeMillis(); // for computing the time taken by the method
+		FairyResult res = new FairyResult();
+		
+		LinkedList<Integer> t = new LinkedList<Integer>();
+		for (int i = 0; i < this.getNumStates(); i++){
+			if (target.get(i)){
+				t.add(i);
+			}
+		}
+		int oldSize = 0;
+		while (t.size() != oldSize){
+			oldSize = t.size();
+			for (Integer i : getPre(t,true)){
+				if (!t.contains(i))
+					t.add(i);
+			}
+		}
+
+		LinkedList<Integer> notT = new LinkedList<Integer>();
+		for (int i = 0; i < this.getNumStates(); i++){
+			if (!t.contains(i)){
+				notT.add(i);
+			}
+		}
+		oldSize = 0;
+		while (notT.size() != oldSize){
+			oldSize = notT.size();
+			for (Integer i : getPre(notT,false)){
+				if (!notT.contains(i))
+					notT.add(i);
+			}
+		}
+		
+		timer = System.currentTimeMillis() - timer;
+		res.timeTaken = timer;
+		res.terminating = notT.isEmpty();
+		//return notT.isEmpty();
+		return res;
+	}
+	
+	// LP: Added method to get predecessor states from a given set of states
+	private List<Integer> getPre(List<Integer> s, boolean forall){
+		LinkedList<Integer> res = new LinkedList<Integer>();
+		if (!forall){
+			for (int i=0;i<this.getNumStates();i++){
+				boolean addIt = false;
+				List<Distribution> act = this.trans.get(i);
+				for (int j=0;j<act.size() && !addIt;j++){
+					for (Integer succ : act.get(j).getSupport()){
+						if (s.contains(succ)){
+							res.add(i);
+							addIt = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		else{
+			for (int i=0;i<this.getNumStates();i++){
+				if (this.stateOwners.get(i)==1){
+					boolean addIt = true;
+					List<Distribution> act = this.trans.get(i);
+					for (int j=0;j<act.size() && addIt;j++){
+						boolean atLeastOneSupport = false;
+						for (Integer succ : act.get(j).getSupport()){
+							if (s.contains(succ)){
+								atLeastOneSupport = true;
+								break;
+							}
+						}
+						if (!atLeastOneSupport){
+							addIt = false;
+							break;
+						}
+					}
+					if (addIt)
+						res.add(i);
+				}
+				else{
+					boolean addIt = false;
+					List<Distribution> act = this.trans.get(i);
+					for (int j=0;j<act.size() && !addIt;j++){
+						for (Integer succ : act.get(j).getSupport()){
+							if (s.contains(succ)){
+								res.add(i);
+								addIt = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return res;
+	}
 	
 }// end class
