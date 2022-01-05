@@ -196,6 +196,7 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 		// we use the second method for computing the upper bound
 		//init = computeUpperBoundVariant2(stpg, (SMGRewardsSimple)rewards, min1, min2);
 		init = stpg.computeUpperBoundVariant2(2, (STPGRewardsSimple)rewards, this);
+		//mainLog.println("Target set: " + target);
 		//mainLog.println("Upper Bound Computed with Baier's Method: "+ Arrays.toString(init));
 	
 		// Are we generating an optimal adversary?

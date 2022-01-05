@@ -176,6 +176,7 @@ public class FairyCL implements PrismModelListener {
 			errorAndExit(e.getMessage());
 		}
 		mc.setModelCheckingInfo(currentModelGenerator, null, currentModelGenerator);
+		//mainLog.println("reward structure: "+currentModelGenerator.getRewardStructIndex("r1"));
 		if (this.checkFairness){
 			FairyResult result =  mc.checkStoppingUnderFairness(game);
 			//ModulesFileModelGenerator currentModelGenerator = new ModulesFileModelGenerator(modulesFile, prism);	
@@ -187,9 +188,14 @@ public class FairyCL implements PrismModelListener {
 		if (this.computeRewards) {
 			try {
 				FairyResult result = mc.computeFairReachRewards(game, false, true);
-				mainLog.println("Values of the game: "+ Arrays.toString(result.soln));
+				mainLog.print("Value of the game at initial states: ");
+				for (int s : game.getInitialStates()) {
+					mainLog.print((s==0?" ":", ")+result.soln[s]);
+				}
+				mainLog.println("");
 				mainLog.println("Time taken: " + result.timeTaken);
 				mainLog.println("Number of Its.:" + result.numIters);
+				//System.out.println(Arrays.toString(result.soln));
 			}catch(PrismException e){
 				errorAndExit(e.getMessage());
 			}

@@ -82,7 +82,7 @@ public class FairSTPGExplicit extends STPGExplicit {
 	public void transformToUniform(List<Integer> players){
 		// Transform stpg into simple mdp
 		// the current trans is saved
-		this.oldTrans = this.trans; 
+		this.oldTrans = new LinkedList<List<Distribution>>();//this.trans; 
 		
 		// for the players in the list we change the transition to an uniform distribution
 		// this transform de two player game into a MDP
@@ -90,6 +90,7 @@ public class FairSTPGExplicit extends STPGExplicit {
 			for (int i = 0; i < this.getNumStates(); i++){
 				if (this.stateOwners.get(i) == p){ // replace minimizer actions for a unique distribution
 					List<Distribution> act = this.trans.get(i);
+					oldTrans.add(act);
 					this.trans.set(i,new LinkedList<Distribution>());
 					Distribution uniformDist = new Distribution();
 					for (Distribution d : act){
@@ -99,6 +100,9 @@ public class FairSTPGExplicit extends STPGExplicit {
 						}
 					}
 					this.trans.get(i).add(uniformDist);
+				}
+				else {
+					oldTrans.add(this.trans.get(i));
 				}
 			}
 		}

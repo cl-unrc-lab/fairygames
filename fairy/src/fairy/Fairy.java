@@ -89,6 +89,7 @@ public class Fairy extends Prism {
 	public void initialise() throws PrismException
 	{
 		// a little hack, we cannot override getToolName because it is static...
+		// a better solution is to implement a FairyLog.. 
 		PrismFileLog tempLog = new PrismFileLog("log");
 		PrismLog oldLog = this.getLog();
 		this.setMainLog(tempLog);
