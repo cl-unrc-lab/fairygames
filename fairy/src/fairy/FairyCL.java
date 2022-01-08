@@ -72,6 +72,9 @@ import explicit.STPGExplicit;
 import explicit.ModelCheckerResult;
 import simulator.ModulesFileModelGenerator;
 import prism.UndefinedConstants;
+import prism.ResultsExporter;
+import prism.ResultsCollection;
+import parser.Values;
 
 /**
  * @author Pablo
@@ -94,6 +97,8 @@ public class FairyCL implements PrismModelListener {
 	private boolean checkFairness = false;
 	private boolean computeRewards = false;
 	private String constSwitch = null; // for  dealing with constants
+	private boolean exportResults = false; // true if export is enabled
+	private String exportResultsFilename = null;
 	
 	// model failure info
 	boolean modelBuildFail = false;
@@ -151,10 +156,15 @@ public class FairyCL implements PrismModelListener {
 			errorAndExit("Model type must be SMG or STPG");
 		}
 		
+		// a variable to keep track of the results
+		ResultsCollection results = null;
+		
 		try {
 			// TBD: process info about undefined constants
 			UndefinedConstants undefinedMFConstants = new UndefinedConstants(modulesFile, null); // set the undefined constants
 			undefinedMFConstants.defineUsingConstSwitch(constSwitch);
+			// a variable to keep track of the results
+			results = new ResultsCollection(undefinedMFConstants);
 			
 			for (int i=0; i < undefinedMFConstants.getNumModelIterations(); i++) { // for every value of the constans
 				Values definedMFConstants = undefinedMFConstants.getMFConstantValues();
@@ -191,9 +201,11 @@ public class FairyCL implements PrismModelListener {
 				if (this.computeRewards) {
 					try {
 						FairyResult result = mc.computeFairReachRewards(game, false, true);
+						Values definedConstants = undefinedMFConstants.getMFConstantValues(); // get the values of the constants
 						mainLog.print("Value of the game at initial states: ");
 						for (int s : game.getInitialStates()) {
 							mainLog.print((s==0?" ":", ")+result.soln[s]);
+							results.setResult(definedConstants, result.soln[s]); // set the for only one initial state?
 						}
 						mainLog.println("");
 						mainLog.println("Time taken: " + result.timeTaken);
@@ -210,6 +222,20 @@ public class FairyCL implements PrismModelListener {
 		catch(PrismException e) {
 			errorAndExit("Error in Prism Model:"+e.getMessage());
 		}
+		
+		// we export the results if needed
+		if (exportResults) {
+			ResultsExporter exporter = new ResultsExporter("plain", "string");
+			mainLog.print("\nExporting results ");
+			mainLog.println(exportResultsFilename.equals("stdout") ? "below:\n" : "to file \"" + exportResultsFilename + "\"...");
+			PrismFileLog tmpLog = new PrismFileLog(exportResultsFilename);
+			if (!tmpLog.ready()) {
+				errorAndExit("Couldn't open file \"" + exportResultsFilename + "\" for output");
+			}
+			tmpLog.println(results.export(exporter).getExportString());
+			tmpLog.close();	
+		}
+		
 		/**
 		FairSTPGModelChecker mc = null;
 		try {
@@ -303,6 +329,15 @@ public class FairyCL implements PrismModelListener {
 						constSwitch += "," + args[++i].trim();
 				} else {
 					errorAndExit("Incomplete constant information");
+				}
+				break;
+			case "-exportresults":
+				this.exportResults = true;
+				if (i < args.length - 1) {
+					// store argument for later use (append if already partially specified)
+					this.exportResultsFilename = args[++i].trim();
+				} else {
+					errorAndExit("Provide a file name for exporting the results.");
 				}
 				break;
 			default:
