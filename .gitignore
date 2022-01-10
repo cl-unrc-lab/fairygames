@@ -2,11 +2,6 @@
 *.class
 *.o
 *.a
-*.dylib
-*.jnilib
-*.so
-*.dll
-
 
 # Log file
 *.log
