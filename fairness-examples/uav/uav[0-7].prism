@@ -1,0 +1,108 @@
+// Map:
+//
+// [w1-w4 danger?:False] [w1-w6 danger?:False] [w1-w7 danger?:False] 
+// [w2-w3 danger?:False] [w2-w4 danger?:False] [w2-w5 danger?:False] [w2-w7 danger?:False] 
+// 
+// [w4-w6 danger?:False] [w4-w7 danger?:False] 
+// [w5-w6 danger?:False] 
+// [w6-w7 danger?:False] 
+// // Checkpoints:
+//[w1][w2][w5][w7]// Rewards:
+//[w1](9)[w2](8)[w3](4)[w4](0)[w5](3)[w6](5)[w7](9)
+
+smg
+const double pb;
+const double del;
+// UAV variables
+global state : [0..4] init 0; // 0:init,1:good_img,2:del,3:no_del,4:stop
+global stop : bool init false;
+global w : [0..7] init 1;
+global w1 : bool init false ;  // visited w1?
+global w2 : bool init false ;  // visited w2?
+global w3 : bool init false ;  // visited w3?
+global w4 : bool init false ;  // visited w4?
+global w5 : bool init false ;  // visited w5?
+global w6 : bool init false ;  // visited w6?
+global w7 : bool init false ;  // visited w7?
+// Players
+global pl : [1..2] init 2; // 1 ... UAV, 2 ... operator
+player p1
+UAV, [uav_stop],[uav_fly_1_4],[uav_fly_1_6],[uav_fly_1_7],[uav_fly_2_3],[uav_fly_2_4],[uav_fly_2_5],[uav_fly_2_7],[uav_fly_3_2],[uav_fly_4_1],[uav_fly_4_2],[uav_fly_4_6],[uav_fly_4_7],[uav_fly_5_2],[uav_fly_5_6],[uav_fly_6_1],[uav_fly_6_4],[uav_fly_6_5],[uav_fly_6_7],[uav_fly_7_1],[uav_fly_7_2],[uav_fly_7_4],[uav_fly_7_6]
+endplayer
+player p2
+Operator, [image], [delegate], [op_fly]
+endplayer
+
+//UAV model
+module UAV
+
+    [uav_fly_1_4] pl = 1 & state = 3 & w = 1 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 4) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_1_6] pl = 1 & state = 3 & w = 1 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 6) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_1_7] pl = 1 & state = 3 & w = 1 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 7) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_2_3] pl = 1 & state = 3 & w = 2 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 3) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_2_4] pl = 1 & state = 3 & w = 2 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 4) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_2_5] pl = 1 & state = 3 & w = 2 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 5) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_2_7] pl = 1 & state = 3 & w = 2 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 7) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_3_2] pl = 1 & state = 3 & w = 3 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 2) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_4_1] pl = 1 & state = 3 & w = 4 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 1) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_4_2] pl = 1 & state = 3 & w = 4 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 2) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_4_6] pl = 1 & state = 3 & w = 4 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 6) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_4_7] pl = 1 & state = 3 & w = 4 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 7) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_5_2] pl = 1 & state = 3 & w = 5 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 2) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_5_6] pl = 1 & state = 3 & w = 5 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 6) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_6_1] pl = 1 & state = 3 & w = 6 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 1) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_6_4] pl = 1 & state = 3 & w = 6 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 4) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_6_5] pl = 1 & state = 3 & w = 6 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 5) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_6_7] pl = 1 & state = 3 & w = 6 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 7) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_7_1] pl = 1 & state = 3 & w = 7 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 1) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_7_2] pl = 1 & state = 3 & w = 7 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 2) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_7_4] pl = 1 & state = 3 & w = 7 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 4) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_fly_7_6] pl = 1 & state = 3 & w = 7 -> 1-pb: (pl' = 2) & (state' = 0) & (w' = 6) + pb: (pl' = 2) & (state' = 4) & (stop'=true);
+    [uav_stop] pl=1 & w1 & w2 & w3 & w4 & w5 & w6 & w7 -> (state' = 4) & (stop'=true);
+    [uav_stop] pl=1 & stop -> true;
+endmodule
+//Operator model
+module Operator
+
+    [image] pl=2 & state = 0 -> (state' = 0); //bad image
+    [image] pl=2 & state = 0 -> (state' = 1); //good image
+    [delegate] pl=2 & state = 1 & w = 1 -> del: (state' = 3) & (pl' = 1) & (w1' = true) + 1-del: (state' = 2) & (w1' = true);
+    [delegate] pl=2 & state = 1 & w = 2 -> del: (state' = 3) & (pl' = 1) & (w2' = true) + 1-del: (state' = 2) & (w2' = true);
+    [delegate] pl=2 & state = 1 & w = 3 -> (state' = 3) & (pl' = 1) & (w3' = true);
+    [delegate] pl=2 & state = 1 & w = 4 -> (state' = 3) & (pl' = 1) & (w4' = true);
+    [delegate] pl=2 & state = 1 & w = 5 -> del: (state' = 3) & (pl' = 1) & (w5' = true) + 1-del: (state' = 2) & (w5' = true);
+    [delegate] pl=2 & state = 1 & w = 6 -> (state' = 3) & (pl' = 1) & (w6' = true);
+    [delegate] pl=2 & state = 1 & w = 7 -> del: (state' = 3) & (pl' = 1) & (w7' = true) + 1-del: (state' = 2) & (w7' = true);
+    [op_fly] pl=2 & state = 2 & w = 1 -> 1-pb: (state' = 0) & (w' = 4) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 1 -> 1-pb: (state' = 0) & (w' = 6) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 1 -> 1-pb: (state' = 0) & (w' = 7) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 2 -> 1-pb: (state' = 0) & (w' = 3) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 2 -> 1-pb: (state' = 0) & (w' = 4) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 2 -> 1-pb: (state' = 0) & (w' = 5) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 2 -> 1-pb: (state' = 0) & (w' = 7) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 3 -> 1-pb: (state' = 0) & (w' = 2) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 4 -> 1-pb: (state' = 0) & (w' = 1) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 4 -> 1-pb: (state' = 0) & (w' = 2) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 4 -> 1-pb: (state' = 0) & (w' = 6) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 4 -> 1-pb: (state' = 0) & (w' = 7) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 5 -> 1-pb: (state' = 0) & (w' = 2) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 5 -> 1-pb: (state' = 0) & (w' = 6) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 6 -> 1-pb: (state' = 0) & (w' = 1) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 6 -> 1-pb: (state' = 0) & (w' = 4) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 6 -> 1-pb: (state' = 0) & (w' = 5) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 6 -> 1-pb: (state' = 0) & (w' = 7) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 7 -> 1-pb: (state' = 0) & (w' = 1) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 7 -> 1-pb: (state' = 0) & (w' = 2) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 7 -> 1-pb: (state' = 0) & (w' = 4) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+    [op_fly] pl=2 & state = 2 & w = 7 -> 1-pb: (state' = 0) & (w' = 6) + pb: (state' = 4) & (stop'=true) & (pl'=1);
+
+endmodule
+rewards "visited"
+       state=1 & !w1 & w=1 : 9;
+       state=1 & !w2 & w=2 : 8;
+       state=1 & !w3 & w=3 : 4;
+       state=1 & !w4 & w=4 : 0;
+       state=1 & !w5 & w=5 : 3;
+       state=1 & !w6 & w=6 : 5;
+       state=1 & !w7 & w=7 : 9;
+endrewards

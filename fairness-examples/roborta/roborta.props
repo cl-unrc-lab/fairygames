@@ -1,0 +1,8 @@
+<<p1>>R{"r"}max=? [ F (row=LENGTH) ]
+
+<<p2>>R{"r"}min=? [ F (row=LENGTH) ]
+
+<<p2>>Pmin=? [ F (row=LENGTH) ]
+
+<<p2>>R{"r"}min=?[Fc(row=LENGTH)]
+

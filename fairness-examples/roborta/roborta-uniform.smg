@@ -1,0 +1,56 @@
+smg
+
+// This is the roborta exampled, modelled as in the paper
+
+player p1
+  roborta, [rl], [rf], [rr]
+endplayer
+
+player p2
+  light, [l]
+endplayer
+
+const int WIDTH = 3;
+const int LENGTH = 3;
+
+// T models the fault probability of the robot
+const double T;
+
+// Q models the fault probability of the light
+const double Q; 
+global light : [0..3] init 0;
+
+// the rewards structure with 0 in the first row
+// if some cells has rewards zero, then the light will get reward 0, because Prism uses a lfp
+rewards "r"
+	row = 0      : 0;
+	row < LENGTH & row > 0 : 1;
+	row = LENGTH : 0; 
+endrewards
+
+// the rewards structure with 1 in all  cells
+rewards "r1"
+	row < LENGTH : 1;
+	row = LENGTH : 0; 
+endrewards
+
+
+// cells where the robot can only move to the right
+formula MOVES_R = (row=0 & col=0) | (row=1 & col=1) | (row=1 &col=2)  | (row=1 &col=3) | (row=2 &col=1) | (row=3 &col=3);
+// cells where the robot can only move to the left
+formula MOVES_L = (row=1 & col=0) | (row=3 & col=1) | (row=3 & col=2);
+// in the rest of the cells the robot can freely move
+
+module roborta
+	col : [0..WIDTH] init 0;
+	row : [0..LENGTH] init 0;
+	[rl] ((light=1) | (light=3)) & !MOVES_R -> (1-T) : (light'=0) & (col'=mod((col-1),WIDTH)) + (T) : (light'=0);
+	[rr] ((light=1) | (light=3)) & !MOVES_L -> (1-T) : (light'=0) & (col'=mod((col+1), WIDTH)) + (T) : (light'=0) ;
+	[rf] ((light=2) | (light=3)) & (row < LENGTH) -> (1-T) : (light'=0) & (row'=row+1) + (T) : (light'=0);
+endmodule
+
+module light
+	[l] (light=0) -> (0.5)*(1-Q) : (light'=1) + (0.5)*Q : (light'=3) 
+	                 +(0.5)*(1-Q) : (light'=2) + (0.5)*Q : (light'=3);
+//	[lg] (light=0) -> (1-Q) : (light'=2) + Q : (light'=3);
+endmodule

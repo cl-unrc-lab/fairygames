@@ -1,0 +1,34 @@
+smg
+
+// In this example the Upper Bound computed by Prism is too low
+// it returns 93468.23 and the result is 1000000
+
+player p1
+  player1, [b]
+endplayer
+
+player p2
+  player2, [a]
+endplayer
+
+
+global state : [0..2] init 0;
+
+// Should be return 1??
+rewards "r"
+	state = 0     : 1;
+	state = 1     : 0; // with
+	state = 2     : 0;
+	//state = 3     : 0;
+endrewards
+
+module player1
+	//[b] state = 2 -> (state' = 3);
+	//[b] state = 2 -> (state' = 0);
+	[b] (state = 1) -> (state' = 0);
+endmodule
+
+
+module player2
+	[a] (state = 0) -> 0.99999:(state' = 1)  + 0.00001:(state' = 2);
+endmodule

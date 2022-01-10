@@ -1,0 +1,35 @@
+smg
+
+// A Simple example to illustrate another problem of operator R[F]
+// the epsilon may introduce small errors in the iteration procedure
+
+player p1
+  player1, [b]
+endplayer
+
+player p2
+  player2, [a]
+endplayer
+
+
+
+//global state : [0..4] init 0;
+global state : [0..2] init 0;
+
+// Should be return 1??
+rewards "r"
+	state = 0     : 0;
+	state = 1     : 1; // with
+	state = 2     : 0;
+endrewards
+
+module player1
+	[b] state = 1 -> (state' = 2);
+endmodule
+
+
+module player2
+	[a] (state = 0) -> 0.999:(state' = 0) + 0.001:(state' = 1);
+endmodule
+
+
