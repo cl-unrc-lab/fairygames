@@ -1,0 +1,32 @@
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[1-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[1-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[2-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[2-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[3-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_A\[3-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[1-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[1-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[2-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[2-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[3-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_B\[3-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[1-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[1-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[2-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[2-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[3-8-60\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+./fairy -erew -exportresults res.txt ../fairness-examples/roborta/roborta_C\[3-16-120\].smg -const T=0.1:0.4:0.5,Q=0.1:0.4:0.5
+
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[1-6\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[1-8\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[1-10\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[2-6\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[2-8\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[2-10\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[3-6\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[3-8\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
+./fairy -erew -exportresults res.txt ../fairness-examples/uav/uav\[3-10\].smg -const del=0.1:0.4:0.5,pb=0.05:0.05:0.1
