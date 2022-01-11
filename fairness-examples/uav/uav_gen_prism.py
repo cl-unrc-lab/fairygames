@@ -10,7 +10,7 @@ rewards = []
 
 def genRndBoard(seed) :
     
-    probDanger = 0
+    probDanger = 20
     # construct the road map    
     random.seed(seed)
     for i in range(maxWaypoint) :
@@ -187,7 +187,7 @@ def main(argv):
 
     genRndBoard(seed)
 
-    writeUAV_1(path+"uav["+str(seed)+"-"+str(maxWaypoint)+"].prism")
+    writeUAV_1(path+"uav["+str(seed)+"-"+str(maxWaypoint)+"].smg")
 
 
 
