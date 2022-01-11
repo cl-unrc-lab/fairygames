@@ -108,6 +108,90 @@ public class FairSTPGExplicit extends STPGExplicit {
 		}
 	}
 	
+		/**
+	* Compute upperBound for initial GFP value Iteration solution
+	* LP : This methods implements Baier's upper bound computation
+	*/
+	public double[] computeUpperBoundVariant1(int player, STPGRewardsSimple rew, FairSTPGModelChecker mc) throws PrismException{
+		double[] res = new double[this.getNumStates()];
+		// the given player is the minimizer
+		LinkedList<Integer> minimizer = new LinkedList<Integer>();
+		minimizer.add(player);
+		
+		// transform the game to an MDP
+		this.transformToUniform(minimizer);
+
+		// Compute strongly connected components (SCCs)
+		SCCConsumerStore sccStore = new SCCConsumerStore();
+		SCCComputer sccComputer = SCCComputer.createSCCComputer(mc, this, sccStore);
+		sccComputer.computeSCCs();
+		List<BitSet> sccs = sccStore.getSCCs();
+		BitSet notInAnySCCs = sccStore.getNotInSCCs();
+		// Consider singletons as SCCs
+		for (int i = 0; i < this.getNumStates(); i++){
+			if (notInAnySCCs.get(i)){
+				BitSet bs = new BitSet(this.getNumStates());
+				bs.set(i);
+				sccs.add(bs);
+			}
+		}
+		int numSCCs = sccs.size();
+		//mainLog.println("not in any sccs: "+notInAnySCCs);
+
+		// Baier's upper Bound computation
+	    double[] q = new double[numSCCs];
+	    double[] p = new double[numSCCs];
+	    int[] sizes = new int[numSCCs];
+	    for (int t = 0; t < numSCCs; t++){
+	    	BitSet scc = sccs.get(t);
+	    	//mainLog.println("scc: "+scc);
+	    	q[t] = 0;
+	    	p[t] = 1;
+	    	sizes[t] = scc.cardinality();
+	    	for (int i = 0; i < this.getNumStates(); i++){
+	    		if (scc.get(i)){
+	    			double maxProbCandidate;
+	    			List<Distribution> act = this.trans.get(i);
+	    			for (Distribution d : act){
+	    				maxProbCandidate = 0;
+	    				for (Integer s : d.getSupport()){
+	    					if (scc.get(s)){
+	    						maxProbCandidate += d.get(s);
+	    						if (d.get(s) < p[t] && d.get(s)>0){
+	    							p[t] = d.get(s);
+	    						}
+	    					}
+	    				}
+	    				if (maxProbCandidate > q[t] && maxProbCandidate < 1){
+	    					q[t] = maxProbCandidate;
+	    				}
+	    			}
+	    		}
+	    	}
+	    }
+	    // Calculate upper bound
+	    
+	    for (int i = 0; i < this.getNumStates(); i++){
+	    	double initValue = 0;
+	    	LinkedList<Integer> reachable = this.getReachableFrom(i);
+	    	for (Integer j : reachable){
+		        for (int t = 0; t < numSCCs; t++){
+		    		BitSet scc = sccs.get(t);
+		        	if (scc.get(j)){
+		        		double recurrence = 1/(Math.pow(p[t],sizes[t]-1) * (1-q[t]));
+			    		initValue += recurrence * rew.getStateReward(j);
+		        	}	    	
+			    }
+			}
+			res[i] = initValue;
+			//mainLog.println(i+":"+res[i]);
+	    }
+	    
+
+		this.restoreSTPG();
+
+		return res;
+	}
 	
 	public double[] computeUpperBoundVariant2(int player, STPGRewardsSimple rew, FairSTPGModelChecker mc) throws PrismException{
 		double[] res = new double[this.getNumStates()];
