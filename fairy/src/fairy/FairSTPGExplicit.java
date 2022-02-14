@@ -108,7 +108,7 @@ public class FairSTPGExplicit extends STPGExplicit {
 		}
 	}
 	
-		/**
+	/**
 	* Compute upperBound for initial GFP value Iteration solution
 	* LP : This methods implements Baier's upper bound computation
 	*/

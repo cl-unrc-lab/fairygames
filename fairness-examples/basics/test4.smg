@@ -1,7 +1,12 @@
 smg
 
-// A Simple example to illustrate another problem of operator R[F]
-// the epsilon may introduce small errors in the iteration procedure
+// A Simple example to illustrate a problem of operator R[F]
+// the problem seems to be related with the computation of the upper bound 
+// the computed values are:
+// with 1^-6: 39607.955145476146
+// with 1^-8: 2010050.7754585734
+// with 1^-10: 2010050.7754585734
+// Property to be checked:  <<p2>> R{“r”}min=?[F(state=2)]
 
 player p1
   player1, [b]
@@ -13,10 +18,9 @@ endplayer
 
 
 const double Q;
-//global state : [0..4] init 0;
-global state : [0..6] init 0;
+global state : [0..8] init 7;
 
-// Should be return 1??
+// Should be return 2??
 rewards "r"
 	state = 0     : 0;
 	state = 1     : 1; // with
@@ -25,10 +29,15 @@ rewards "r"
 	state = 4     : 0;
 	state = 5     : 0;
 	state = 6     : 0;
+	state = 7     : 0;
+	state = 8     : 2; 
 endrewards
 
 module player1
 	[b] state = 1 -> (state' = 2);
+	[b] state = 7 -> (state' = 8);
+	[b] state = 7 -> (state' = 0);
+	[b] state = 8 -> (state' = 2);
 endmodule
 
 
@@ -37,7 +46,9 @@ module player2
 	[a] (state = 3) -> Q:(state' = 0) + 1-Q:(state' = 4);
 	[a] (state = 4) -> Q:(state' = 0) + 1-Q:(state' = 5);
 	[a] (state = 5) -> Q:(state' = 0) + 1-Q:(state' = 6);
-	[a] (state = 6) -> Q:(state' = 0) + 1-Q:(state' = 1);
+	[a] (state = 6) -> (state' = 0);
+	[a] (state = 6) -> (state' = 1);
 endmodule
+
 
 
