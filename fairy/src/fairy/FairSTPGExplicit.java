@@ -193,6 +193,14 @@ public class FairSTPGExplicit extends STPGExplicit {
 		return res;
 	}
 	
+	/**
+	 * This methods implements the second version of Baier's computations, it produces tighter upperbound
+	 * @param player	The minimizer player
+	 * @param rew		The rewards
+	 * @param mc		The model checker 
+	 * @return	the upper bound
+	 * @throws PrismException
+	 */
 	public double[] computeUpperBoundVariant2(int player, STPGRewardsSimple rew, FairSTPGModelChecker mc) throws PrismException{
 		double[] res = new double[this.getNumStates()];
 		

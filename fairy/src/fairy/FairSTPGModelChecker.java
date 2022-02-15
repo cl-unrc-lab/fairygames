@@ -67,10 +67,11 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 	 * @param init
 	 * @param known
 	 * @param unreachingSemantics
+	 * @param v1
 	 * @return
 	 * @throws PrismException
 	 */
-	public FairyResult computeFairReachRewards(FairSTPGExplicit stpg, STPGRewards rewards, BitSet target, boolean min1, boolean min2, double init[], BitSet known) throws PrismException
+	public FairyResult computeFairReachRewards(FairSTPGExplicit stpg, STPGRewards rewards, BitSet target, boolean min1, boolean min2, double init[], BitSet known, boolean v1) throws PrismException
 	{
 		FairyResult res = null;
 		BitSet inf;
@@ -126,7 +127,7 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 		// Modified: we use GFP computation
 		switch (solnMethod) {
 		case VALUE_ITERATION:
-			res = computeReachRewardsGFPValIter(stpg, rewards, target, inf, min1, min2, init, known);
+			res = computeReachRewardsGFPValIter(stpg, rewards, target, inf, min1, min2, init, known, v1);
 			break;
 		default:
 			throw new PrismException("Unknown STPG solution method " + solnMethod);
@@ -157,13 +158,14 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 	 * @param min2
 	 * @param init
 	 * @param known
+	 * @param v1 	if true, version 1 of Baier's algorithm is used 
 	 * @return
 	 * @throws PrismException
 	 */
-	public FairyResult computeFairReachRewards(FairSTPGExplicit stpg,  boolean min1, boolean min2) throws PrismException
+	public FairyResult computeFairReachRewards(FairSTPGExplicit stpg,  boolean min1, boolean min2, boolean v1) throws PrismException
 	{
 		STPGRewards rew = (STPGRewards) constructRewards(stpg, 0);
-		return computeFairReachRewards(stpg, rew, this.findTerminalStates(stpg), min1, min2, null, null);
+		return computeFairReachRewards(stpg, rew, this.findTerminalStates(stpg), min1, min2, null, null, v1);
 	}
 	
 	
@@ -178,10 +180,11 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 	 * @param min2 Min or max rewards for player 2 (true=min, false=max)
 	 * @param init Optionally, an initial solution vector (will be overwritten) 
 	 * @param known Optionally, a set of states for which the exact answer is known
+	 * @param v1 it says if the upperbound is computed with version 1 or version 2, by default it uses v2
 	 * Note: if 'known' is specified (i.e. is non-null, 'init' must also be given and is used for the exact values.
 	 */
 	public FairyResult computeReachRewardsGFPValIter(FairSTPGExplicit stpg, STPGRewards rewards, BitSet target, BitSet inf, boolean min1, boolean min2,
-		double init[], BitSet known) throws PrismException {
+		double init[], BitSet known, boolean v1) throws PrismException {
 		FairyResult res;
 		BitSet unknown, notInf;
 		int i, n, iters;
@@ -195,7 +198,10 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 		//init = computeUpperBound((STPGExplicit)stpg, (SMGRewardsSimple) rewards);
 		// we use the second method for computing the upper bound
 		//init = computeUpperBoundVariant2(stpg, (SMGRewardsSimple)rewards, min1, min2);
-		init = stpg.computeUpperBoundVariant2(2, (STPGRewardsSimple)rewards, this);
+		if (!v1)
+			init = stpg.computeUpperBoundVariant2(2, (STPGRewardsSimple)rewards, this);
+		else
+			init = stpg.computeUpperBoundVariant1(2, (STPGRewardsSimple)rewards, this);	
 		//mainLog.println("Target set: " + target);
 		//mainLog.println("Upper Bound Computed with Baier's Method: "+ Arrays.toString(init));
 	
@@ -214,7 +220,7 @@ public class FairSTPGModelChecker extends STPGModelChecker{
 		soln = new double[n];
 		soln2 = (init == null) ? new double[n] : init;
 
-		// we initialize the computation of hte upper bound using the upper bound computed with uniform MDP + Baier's method
+		// we initialize the computation of the upper bound using the upper bound computed with uniform MDP + Baier's method
 		for (i = 0; i < n; i++){
 			soln[i] = soln2[i] = target.get(i) ? 0.0 : init[i];
 		}

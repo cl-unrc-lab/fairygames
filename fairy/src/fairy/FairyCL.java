@@ -99,6 +99,7 @@ public class FairyCL implements PrismModelListener {
 	private String constSwitch = null; // for  dealing with constants
 	private boolean exportResults = false; // true if export is enabled
 	private String exportResultsFilename = null;
+	private boolean v1 = false; // if version 1 of Baiers algorithm for computing the upper bound is used, by default the version used ins v2, this upper bound is tighter
 	
 	// model failure info
 	boolean modelBuildFail = false;
@@ -200,7 +201,8 @@ public class FairyCL implements PrismModelListener {
 				}
 				if (this.computeRewards) {
 					try {
-						FairyResult result = mc.computeFairReachRewards(game, false, true);
+						// the result is computed, v1 ise used to check which methods it needs to use
+						FairyResult result = this.v1?mc.computeFairReachRewards(game, false, true, true):mc.computeFairReachRewards(game, false, true, false);
 						Values definedConstants = undefinedMFConstants.getMFConstantValues(); // get the values of the constants
 						mainLog.print("Value of the game at initial states: ");
 						for (int s : game.getInitialStates()) {
@@ -310,6 +312,9 @@ public class FairyCL implements PrismModelListener {
 		
 		for (int i=0; i<args.length; i++) {
 			switch(args[i]){
+			case "-v1":
+				this.v1 = true;
+				break;
 			case "-check":
 				this.checkFairness = true;
 				break;
